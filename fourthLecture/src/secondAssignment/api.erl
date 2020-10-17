@@ -4,78 +4,82 @@
 %%% @doc
 %%%
 %%% @end
-%%% Created : 17. Oct 2020 3:38 PM
+%%% Created : 17. Oct 2020 5:48 PM
 %%%-------------------------------------------------------------------
--module(crud).
+-module(api).
 -author("mkatanec").
 
 %% API
--export([add/0, replace/0, delete/0, find/0, server_startup/0, server_loop/0]).
+-export([server_loop/1, run/0, add/0, replace/0, delete/0, find/0, add/1, replace/1, delete/1, find/1]).
+
+add(Person) ->
+  server ! {self(), add, Person},
+  receive
+    Response ->
+      io:format("Response: ~w~n", [Response])
+  end.
 
 add() ->
-  M = maps:new(),
-  server_startup(),
-  server ! {self(), add, {M, {"Mac", "Miller", []}}},
+  add({"Mac", "Miller", []}).
+
+replace(Person) ->
+  server ! {self(), replace, Person},
   receive
     Response ->
       io:format("Response: ~w~n", [Response])
   end.
 
 replace() ->
-  M = #{"MacMiller" => []},
-  server_startup(),
-  server ! {self(), replace, {M, {"Mac", "Miller", [{"Netko", "Drug"}]}}},
+  replace({"Mac", "Miller", [{"Netko", "Drug"}]}).
+
+delete(Person) ->
+  server ! {self(), delete, Person},
   receive
     Response ->
       io:format("Response: ~w~n", [Response])
   end.
 
 delete() ->
-  M = #{"MacMiller" => []},
-  server_startup(),
-  server ! {self(), delete, {M, {"Mac", "Miller"}}},
+  delete({"Mac", "Miller"}).
+
+find(Person) ->
+  server ! {self(), find, Person},
   receive
     Response ->
       io:format("Response: ~w~n", [Response])
   end.
 
 find() ->
-  M = #{"MacMiller" => [{"Netko", "Drugi"}]},
-  server_startup(),
-  server ! {self(), find, {M, {"Mac", "Miller"}}},
-  receive
-    Response ->
-      io:format("Response: ~w~n", [Response])
-  end.
+  find({"Mac", "Miller"}).
 
-server_startup() ->
-  Pid = spawn(crud, server_loop, []),
+run() ->
+  Pid = spawn(api, server_loop, [maps:new()]),
   register(server, Pid).
 
-server_loop() ->
+server_loop(Map) ->
   receive
-    {Pid, add, {Map, Person}} ->
+    {Pid, add, Person} ->
       M = add(Map, Person),
       Pid ! M,
-      server_loop();
-    {Pid, replace, {Map, Person}} ->
+      server_loop(M);
+    {Pid, replace, Person} ->
       M = add(Map, Person),
       Pid ! M,
-      server_loop();
-    {Pid, delete, {Map, Person}} ->
+      server_loop(M);
+    {Pid, delete, Person} ->
       M = delete(Map, Person),
       Pid ! M,
-      server_loop();
-    {Pid, find, {Map, Person}} ->
+      server_loop(M);
+    {Pid, find, Person} ->
       M = find(Map, Person),
       Pid ! M,
-      server_loop();
+      server_loop(M);
     stop ->
       unregister(server),
       true;
     Ignore ->
       io:format("Ignore: ~w~n", [Ignore]),
-      server_loop()
+      server_loop(Map)
   end.
 
 add(Map, {Name, Surname, Friends}) ->
@@ -86,4 +90,3 @@ delete(Map, {Name, Surname}) ->
 
 find(Map, {Name, Surname}) ->
   maps:find(string:concat(Name, Surname), Map).
-
