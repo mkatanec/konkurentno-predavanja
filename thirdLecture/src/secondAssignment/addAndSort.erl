@@ -10,9 +10,12 @@
 -author("mkatanec").
 
 %% API
--export([addToList/2]).
+-export([run/0]).
 
-addToList (Element, List) ->
+run() ->
+  addToList(2, [1, 3, 4]).
+
+addToList(Element, List) ->
   FirstPartOfTheList = [X || X <- List, X < Element],
   Rest = [X || X <- List, X > Element],
   Combined = FirstPartOfTheList ++ [Element] ++ Rest,

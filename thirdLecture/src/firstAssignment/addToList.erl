@@ -10,7 +10,10 @@
 -author("mkatanec").
 
 %% API
--export([addToList/2]).
+-export([run/0]).
+
+run() ->
+  addToList(2, [1, 3, 4]).
 
 addToList(Element, List) ->
   Nes = List ++ [Element],

@@ -12,13 +12,13 @@
 %% API
 -export([run/0]).
 
-sort (X, E) ->
+run() ->
+  addToList(2, [1, 3, 4], fun sort/2).
+
+sort(X, E) ->
   X > E.
 
-run () ->
-  addToList(2, [1,3], fun sort/2).
-
-addToList (Element, List, Sort) ->
+addToList(Element, List, Sort) ->
   FirstPartOfTheList = [X || X <- List, not Sort(X, Element)],
   Rest = [X || X <- List, Sort(X, Element)],
   Combined = FirstPartOfTheList ++ [Element] ++ Rest,
