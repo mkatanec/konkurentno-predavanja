@@ -10,21 +10,32 @@
 -author("mkatanec").
 
 %% API
--export([run/0, server_loop/1, serveric/0]).
+-export([run/0, server_loop/1, serveric/1]).
+
+sort(Name) ->
+  true.
 
 run() ->
   Pid1 = spawn(twoProcs, server_loop, [maps:new()]),
   register(server_one, Pid1),
   Pid2 = spawn(twoProcs, server_loop, [maps:new()]),
   register(server_two, Pid2),
-  Pid3 = spawn(twoProcs, serveric, []),
+  Pid3 = spawn(twoProcs, serveric, [fun sort/1]),
   register(server, Pid3).
 
-serveric() ->
+serveric(Sort) ->
   receive
     Request ->
+      {_, _, {Name, _, _}} = Request,
+      Server = Sort(Name),
+      if
+        Server ->
+          server_one ! Request;
+        true ->
+          server_two ! Request
+      end,
       server_one ! Request,
-      serveric()
+      serveric(Sort)
   end.
 
 server_loop(Map) ->
