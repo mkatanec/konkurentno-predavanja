@@ -38,6 +38,7 @@ getList(Response) ->
   {_, Parent} = Response,
   Parent.
 
+%% dvije liste
 find(Person, Map, Depth) ->
   if
     Depth > 1 ->

@@ -34,7 +34,6 @@ serveric(Sort) ->
         true ->
           server_two ! Request
       end,
-      server_one ! Request,
       serveric(Sort)
   end.
 
