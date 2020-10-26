@@ -12,7 +12,7 @@
 %% API
 -export([start_global/0, call_global/1, server_loop/1]).
 
-
+%% dodati da prima name da se moze vise pokrenut
 start_global() ->
   Pid = spawn(wakeApi, server_loop, [maps:new()]),
   global:register_name(naziv, Pid).
