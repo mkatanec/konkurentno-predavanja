@@ -33,7 +33,9 @@ init([]) ->
   Shutdown = 2000,
   Type = worker,
 
-  AChild = {redBlack_serv, {redBlack_serv, start_link, []},
+  AChild = {redBlack_servA, {redBlack_serv, start_link, [redBlack_servA]},
+    Restart, Shutdown, Type, [redBlack_serv]},
+  BChild = {redBlack_servB, {redBlack_serv, start_link, [redBlack_servB]},
     Restart, Shutdown, Type, [redBlack_serv]},
 
-  {ok, {SupFlags, [AChild]}}.
+  {ok, {SupFlags, [AChild, BChild]}}.
