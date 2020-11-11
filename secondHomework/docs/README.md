@@ -7,7 +7,7 @@ Pokretanje
     - `docker run -it --rm --name iod -h io.local homework -sname io`
     - `docker run -it --rm --name comd -h com.local homework -sname com`
     - `docker run -it --rm --name balancerd -h balancer.local --link hrd:hr --link iod:io --link comd:com homework -sname balancer`
-1. Pozivi sekvencijalnih metoda
+4. Pozivi sekvencijalnih metoda
     - `balancer:add({"www.address.hr", "1.11.1.1."})`
     - `balancer:replace({"www.address.hr", "1.11.1.1."})`
     - `balancer:remove({"www.address.hr", "1.11.1.1."})`
